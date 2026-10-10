@@ -48,13 +48,13 @@ export function VistaAgenda({ hoy }: { hoy: string }) {
             type="date"
             value={fecha}
             onChange={(e) => setFecha(e.target.value)}
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20"
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
           />
         </div>
         {citas && (
-          <div className="rounded-xl bg-teal-50 px-4 py-2 text-right">
-            <p className="text-2xl font-bold leading-none text-teal-700">{citas.length}</p>
-            <p className="mt-1 text-xs font-medium text-teal-800">
+          <div className="rounded-xl bg-indigo-50 px-4 py-2 text-right">
+            <p className="text-2xl font-bold leading-none text-indigo-700">{citas.length}</p>
+            <p className="mt-1 text-xs font-medium text-indigo-800">
               {citas.length === 1 ? "cita" : "citas"} este día
             </p>
           </div>
@@ -92,7 +92,7 @@ export function VistaAgenda({ hoy }: { hoy: string }) {
               key={`${c.id}-${i}`}
               className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
             >
-              <div className="flex h-14 w-16 shrink-0 items-center justify-center rounded-xl bg-teal-600 font-mono text-base font-semibold text-white">
+              <div className="flex h-14 w-16 shrink-0 items-center justify-center rounded-xl bg-indigo-600 font-mono text-base font-semibold text-white">
                 {c.hora}
               </div>
               <div className="min-w-0">
