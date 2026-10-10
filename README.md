@@ -59,6 +59,10 @@ Copia `.env.example` a `.env.local` para desarrollo.
 | `CUPO_POR_FRANJA` | Cupo por franja (solo la usaría `/franjas`, que no está implementada). |
 | `FRANJAS` | Franjas separadas por coma, p. ej. `08:00,09:00,10:00`. |
 
+### Despliegue en Vercel (sin panel de variables)
+
+El repositorio incluye `.env.production`, que Next.js carga automáticamente al compilar, así que no hace falta configurar variables en Vercel. Ese archivo contiene la URL del webhook de Make y el repositorio es público: si dejas de usarlo, regenera el webhook en Make.
+
 ### Acceso a la hoja
 
 La app lee la hoja como CSV público, sin credenciales. Por eso la hoja debe estar compartida como **"Cualquier persona con el enlace puede ver"**. Ten en cuenta que, al ser pública, cualquiera con el enlace ve también la columna `correo`; la app solo la oculta en `/agenda`.
