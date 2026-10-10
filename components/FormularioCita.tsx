@@ -134,9 +134,6 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
           tipo: "exito",
           estado: data.estado,
           mensaje: data.mensaje,
-          cuposLibres: data.cupos_libres,
-          fecha,
-          hora,
         });
       } else {
         setResultado({ tipo: "error", mensaje: ERROR_GENERICO });

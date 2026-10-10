@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 export type Estado = "confirmada" | "con_alerta" | "rechazada";
 
 export type Resultado =
-  | { tipo: "exito"; estado: Estado; mensaje: string; cuposLibres?: number; fecha: string; hora: string }
+  | { tipo: "exito"; estado: Estado; mensaje: string }
   | { tipo: "error"; mensaje: string };
 
 const MENSAJE_RECHAZADA = "Para esa franja no se puede agendar una cita, elige otra franja.";
@@ -78,21 +78,6 @@ export function ModalResultado({
         <p id="modal-mensaje" className="mt-2 text-sm text-slate-600">
           {mensaje}
         </p>
-
-        {resultado.tipo === "exito" && !rechazada && (
-          <dl className="mt-4 grid grid-cols-2 gap-1 rounded-md bg-slate-50 p-3 text-left text-sm">
-            <dt className="font-medium">Fecha</dt>
-            <dd>{resultado.fecha}</dd>
-            <dt className="font-medium">Franja</dt>
-            <dd>{resultado.hora}</dd>
-            {resultado.cuposLibres !== undefined && (
-              <>
-                <dt className="font-medium">Cupos libres</dt>
-                <dd>{resultado.cuposLibres}</dd>
-              </>
-            )}
-          </dl>
-        )}
 
         {rechazada && (
           <p className="mt-3 text-xs text-slate-500">Tus datos se conservaron; solo cambia la franja.</p>
