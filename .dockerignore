@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.example
+prompt_claude_code.md
+Dockerfile
+README.md
