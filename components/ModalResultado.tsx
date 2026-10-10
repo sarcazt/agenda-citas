@@ -8,7 +8,7 @@ export type Resultado =
   | { tipo: "exito"; estado: Estado; mensaje: string }
   | { tipo: "error"; mensaje: string };
 
-const MENSAJE_RECHAZADA = "Para esa franja no se puede agendar una cita, elige otra franja.";
+const MENSAJE_RECHAZADA_POR_DEFECTO = "Para esa franja no se puede agendar una cita, elige otra franja.";
 
 const TITULOS: Record<Estado, string> = {
   confirmada: "Cita confirmada",
@@ -48,8 +48,9 @@ export function ModalResultado({
   const estilo = ESTILOS[clave];
   const rechazada = resultado.tipo === "exito" && resultado.estado === "rechazada";
   const titulo = resultado.tipo === "error" ? "No se pudo agendar la cita" : TITULOS[resultado.estado];
+  // Se muestra el mensaje que devuelve Make; el texto fijo solo cubre un mensaje vacío.
   const mensaje =
-    resultado.tipo === "error" ? resultado.mensaje : rechazada ? MENSAJE_RECHAZADA : resultado.mensaje;
+    resultado.mensaje.trim() || (rechazada ? MENSAJE_RECHAZADA_POR_DEFECTO : "");
   const textoBoton =
     resultado.tipo === "error" ? "Reintentar" : rechazada ? "Elegir otra franja" : "Aceptar";
 
