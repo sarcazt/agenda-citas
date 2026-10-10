@@ -9,7 +9,7 @@ const PRUEBAS = [
   {
     etiqueta: "María López · Luna (Gato) · Consulta general",
     propietario: "María López",
-    correo: "maria@example.com",
+    correo: "carbenachi@gmail.com",
     telefono: "3187141190",
     mascota: "Luna",
     especie: "Gato",
@@ -19,7 +19,7 @@ const PRUEBAS = [
   {
     etiqueta: "Carlos Pérez · Rocky (Perro) · Vacunación",
     propietario: "Carlos Pérez",
-    correo: "carlos@example.com",
+    correo: "carbenachi@gmail.com",
     telefono: "3187141190",
     mascota: "Rocky",
     especie: "Perro",
@@ -29,7 +29,7 @@ const PRUEBAS = [
   {
     etiqueta: "Ana Gómez · Kiwi (Ave) · Control",
     propietario: "Ana Gómez",
-    correo: "ana@example.com",
+    correo: "carbenachi@gmail.com",
     telefono: "3187141190",
     mascota: "Kiwi",
     especie: "Ave",
@@ -39,7 +39,7 @@ const PRUEBAS = [
   {
     etiqueta: "Juan Torres · Thor (Perro) · Cirugía",
     propietario: "Juan Torres",
-    correo: "juan@example.com",
+    correo: "carbenachi@gmail.com",
     telefono: "3187141190",
     mascota: "Thor",
     especie: "Perro",
