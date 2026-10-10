@@ -1,6 +1,4 @@
 import { google } from "googleapis";
-import { isMock } from "./config";
-import { citasMockPorFecha } from "./mock-store";
 import { ESTADOS, type Estado } from "./schemas";
 
 /** Cita tal como se muestra en la agenda: sin correo. */
@@ -22,7 +20,7 @@ function cliente() {
 
   const auth = new google.auth.JWT({
     email,
-    key: key.replace(/\n/g, "\n"),
+    key: key.replace(/\\n/g, "\n"),
     scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
   });
   return { sheets: google.sheets({ version: "v4", auth }), sheetId };
@@ -30,8 +28,6 @@ function cliente() {
 
 /** Lee la hoja y devuelve las citas de una fecha (YYYY-MM-DD), ordenadas por franja. */
 export async function citasPorFecha(fecha: string): Promise<CitaAgenda[]> {
-  if (isMock()) return citasMockPorFecha(fecha);
-
   const { sheets, sheetId } = cliente();
   const tab = process.env.GOOGLE_SHEET_TAB || "Citas";
 

@@ -59,7 +59,6 @@ Copia `.env.example` a `.env.local` para desarrollo.
 | `GOOGLE_PRIVATE_KEY` | Clave privada de la cuenta de servicio. Acepta `\n` escapados. |
 | `CUPO_POR_FRANJA` | Cupo por franja (solo la usará `/franjas`). |
 | `FRANJAS` | Franjas separadas por coma, p. ej. `08:00,09:00,10:00`. |
-| `MAKE_MOCK` | `true` para no llamar a Make y simular respuestas. |
 
 ### Cuenta de servicio de Google
 
@@ -67,26 +66,11 @@ Copia `.env.example` a `.env.local` para desarrollo.
 2. Genera una clave JSON y copia `client_email` y `private_key` a las variables.
 3. Comparte la hoja con el correo de la cuenta de servicio (permiso de lector basta).
 
-## Modo simulado
-
-Con `MAKE_MOCK=true`, `/api/agendar` responde según la franja:
-
-| Franja | Resultado |
-| --- | --- |
-| `09:00` | `confirmada` |
-| `10:00` | `con_alerta` |
-| `11:00` | `rechazada` |
-| `14:00` | error (respuesta inválida) |
-| `15:00` | error (tiempo agotado) |
-| otras | `confirmada` |
-
-La franja se toma del campo `hora`.
-
 ## Desarrollo
 
 ```bash
 npm install
-cp .env.example .env.local   # y pon MAKE_MOCK=true
+cp .env.example .env.local   # y completa los valores
 npm run dev                  # http://localhost:3000
 ```
 

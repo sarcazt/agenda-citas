@@ -7,7 +7,3 @@ export function getFranjas(): string[] {
     .map((f) => f.trim())
     .filter(Boolean);
 }
-
-export function isMock(): boolean {
-  return process.env.MAKE_MOCK === "true";
-}
