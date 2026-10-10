@@ -1,6 +1,6 @@
 import { getCupoPorFranja, getFranjas } from "@/lib/config";
 import { hoyBogota } from "@/lib/fechas";
-import { todasLasCitas } from "@/lib/sheets";
+import { esAprobada, todasLasCitas } from "@/lib/sheets";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +18,8 @@ export async function GET() {
     // Conteo de citas por fecha y hora.
     const ocupadas = new Map<string, { fecha: string; franja: string; n: number }>();
     for (const c of citas) {
-      if (c.fecha < hoy || !franjas.has(c.hora)) continue;
+      // Solo las citas aprobadas ocupan cupo; las rechazadas no.
+      if (!esAprobada(c) || c.fecha < hoy || !franjas.has(c.hora)) continue;
       const clave = `${c.fecha} ${c.hora}`;
       const actual = ocupadas.get(clave) ?? { fecha: c.fecha, franja: c.hora, n: 0 };
       actual.n += 1;

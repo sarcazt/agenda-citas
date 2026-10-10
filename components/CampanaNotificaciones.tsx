@@ -10,31 +10,76 @@ function formatoFecha(fecha: string): string {
   return `${d}/${m}/${a}`;
 }
 
+const CLAVE_VISTAS = "agenda:alertas-vistas";
+
+/** Identifica una alerta; si cambia el estado (queda 1 -> agotada) vuelve a aparecer. */
+function claveAlerta(a: Alerta): string {
+  return `${a.fecha}|${a.franja}|${a.libres}`;
+}
+
+function leerVistas(): Set<string> {
+  try {
+    const crudo = localStorage.getItem(CLAVE_VISTAS);
+    const lista = crudo ? JSON.parse(crudo) : [];
+    return new Set(Array.isArray(lista) ? lista.filter((x) => typeof x === "string") : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function guardarVistas(vistas: Set<string>) {
+  try {
+    localStorage.setItem(CLAVE_VISTAS, JSON.stringify([...vistas]));
+  } catch {
+    // Sin almacenamiento disponible: las vistas solo duran mientras la página esté abierta.
+  }
+}
+
 /**
  * Notificaciones de cupos de cualquier día (hoy en adelante), sin depender de la
- * fecha seleccionada: queda 1 cupo -> aviso; 0 -> agotada.
+ * fecha seleccionada: queda 1 cupo -> aviso; 0 -> agotada. Cada una se puede
+ * marcar como vista (se recuerda en este navegador) o limpiar todas a la vez.
  */
 export function CampanaNotificaciones() {
   const [abierto, setAbierto] = useState(false);
   const [alertas, setAlertas] = useState<Alerta[] | null>(null);
+  const [vistas, setVistas] = useState<Set<string>>(new Set());
   const [fallo, setFallo] = useState(false);
   const contenedor = useRef<HTMLDivElement>(null);
-  const lista = alertas ?? [];
+  const lista = (alertas ?? []).filter((a) => !vistas.has(claveAlerta(a)));
 
   const cargar = useCallback(() => {
     fetch("/api/agenda/alertas", { cache: "no-store" })
       .then(async (res) => {
         const data = await res.json();
         if (!res.ok || !data.ok) throw new Error(data.error ?? "Error");
-        setAlertas(data.alertas);
+        const nuevas: Alerta[] = data.alertas;
+        setAlertas(nuevas);
+        // Se descartan las vistas de alertas que ya no existen.
+        const vigentes = new Set(nuevas.map(claveAlerta));
+        setVistas((prev) => new Set([...prev].filter((k) => vigentes.has(k))));
         setFallo(false);
       })
       .catch(() => setFallo(true));
   }, []);
 
   useEffect(() => {
+    setVistas(leerVistas());
     cargar();
   }, [cargar]);
+
+  function marcarVista(a: Alerta) {
+    const siguiente = new Set(vistas).add(claveAlerta(a));
+    setVistas(siguiente);
+    guardarVistas(siguiente);
+  }
+
+  function limpiar() {
+    const siguiente = new Set(vistas);
+    for (const a of alertas ?? []) siguiente.add(claveAlerta(a));
+    setVistas(siguiente);
+    guardarVistas(siguiente);
+  }
 
   useEffect(() => {
     if (!abierto) return;
@@ -88,16 +133,29 @@ export function CampanaNotificaciones() {
           aria-label="Notificaciones de cupos"
           className="absolute right-0 z-20 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-2 shadow-lg"
         >
-          <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Cupos de los próximos días
-          </p>
+          <div className="flex items-center justify-between px-3 py-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Cupos de los próximos días
+            </p>
+            {lista.length > 0 && (
+              <button
+                type="button"
+                onClick={limpiar}
+                className="rounded-md px-2 py-1 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+              >
+                Limpiar todo
+              </button>
+            )}
+          </div>
           {fallo ? (
             <p className="px-3 pb-3 text-sm text-red-700">No se pudieron cargar las notificaciones.</p>
           ) : alertas === null ? (
             <p className="px-3 pb-3 text-sm text-slate-500">Cargando...</p>
           ) : lista.length === 0 ? (
             <p className="px-3 pb-3 text-sm text-slate-600">
-              Sin novedades: ninguna franja está por agotarse.
+              {alertas.length > 0
+                ? "No tienes notificaciones nuevas."
+                : "Sin novedades: ninguna franja está por agotarse."}
             </p>
           ) : (
             <ul className="max-h-96 space-y-1 overflow-y-auto">
@@ -118,7 +176,7 @@ export function CampanaNotificaciones() {
                     >
                       {agotada ? "✕" : "!"}
                     </span>
-                    <div className="text-sm">
+                    <div className="min-w-0 flex-1 text-sm">
                       <p className={`font-semibold ${agotada ? "text-red-900" : "text-amber-900"}`}>
                         Franja {formatoFecha(a.fecha)} · {a.franja}
                       </p>
@@ -128,6 +186,17 @@ export function CampanaNotificaciones() {
                           : "Esta franja se está quedando sin cupos (queda 1)."}
                       </p>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => marcarVista(a)}
+                      className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-semibold transition focus:outline-none focus:ring-2 ${
+                        agotada
+                          ? "bg-white text-red-700 hover:bg-red-100 focus:ring-red-500/40"
+                          : "bg-white text-amber-700 hover:bg-amber-100 focus:ring-amber-500/40"
+                      }`}
+                    >
+                      Visto
+                    </button>
                   </li>
                 );
               })}

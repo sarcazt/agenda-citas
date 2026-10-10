@@ -7,7 +7,19 @@ export type CitaAgenda = {
   mascota: string;
   especie: string;
   servicio: string;
+  /** Estado tal como está en la hoja (p. ej. "Aprobada" o "Rechazada"). */
+  estado: string;
 };
+
+/** Una cita cuenta (calendario y cupos) solo si está aprobada. */
+export function esAprobada(cita: Pick<CitaAgenda, "estado">): boolean {
+  const e = cita.estado
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+  return e.startsWith("aprobad") || e === "confirmada" || e === "con_alerta";
+}
 
 /** Parser CSV mínimo: comillas dobles, comillas escapadas ("") y saltos de línea dentro de campos. */
 function parsearCsv(texto: string): string[][] {
@@ -106,14 +118,17 @@ export async function todasLasCitas(): Promise<CitaAgenda[]> {
       mascota: celda(fila, "mascota"),
       especie: celda(fila, "especie"),
       servicio: celda(fila, "servicio"),
+      estado: celda(fila, "estado"),
     });
   }
 
   return citas;
 }
 
-/** Citas de una fecha (AAAA-MM-DD), ordenadas por hora. */
+/** Citas aprobadas de una fecha (AAAA-MM-DD), ordenadas por hora. */
 export async function citasPorFecha(fecha: string): Promise<CitaAgenda[]> {
   const citas = await todasLasCitas();
-  return citas.filter((c) => c.fecha === fecha).sort((a, b) => a.hora.localeCompare(b.hora));
+  return citas
+    .filter((c) => c.fecha === fecha && esAprobada(c))
+    .sort((a, b) => a.hora.localeCompare(b.hora));
 }

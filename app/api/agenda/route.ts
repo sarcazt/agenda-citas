@@ -1,5 +1,5 @@
 import { esFechaValida } from "@/lib/fechas";
-import { citasPorFecha, todasLasCitas } from "@/lib/sheets";
+import { citasPorFecha, esAprobada, todasLasCitas } from "@/lib/sheets";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
   try {
     if (mes !== null) {
       const citas = (await todasLasCitas())
-        .filter((c) => c.fecha.startsWith(`${mes}-`))
+        .filter((c) => c.fecha.startsWith(`${mes}-`) && esAprobada(c))
         .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
       return Response.json({ ok: true, mes, total: citas.length, citas });
     }
