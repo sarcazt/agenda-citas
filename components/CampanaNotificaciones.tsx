@@ -10,35 +10,16 @@ function formatoFecha(fecha: string): string {
   return `${d}/${m}/${a}`;
 }
 
-const CLAVE_VISTAS = "agenda:alertas-vistas";
-
 /** Identifica una alerta; si cambia el estado (queda 1 -> agotada) vuelve a aparecer. */
 function claveAlerta(a: Alerta): string {
   return `${a.fecha}|${a.franja}|${a.libres}`;
 }
 
-function leerVistas(): Set<string> {
-  try {
-    const crudo = localStorage.getItem(CLAVE_VISTAS);
-    const lista = crudo ? JSON.parse(crudo) : [];
-    return new Set(Array.isArray(lista) ? lista.filter((x) => typeof x === "string") : []);
-  } catch {
-    return new Set();
-  }
-}
-
-function guardarVistas(vistas: Set<string>) {
-  try {
-    localStorage.setItem(CLAVE_VISTAS, JSON.stringify([...vistas]));
-  } catch {
-    // Sin almacenamiento disponible: las vistas solo duran mientras la página esté abierta.
-  }
-}
-
 /**
  * Notificaciones de cupos de cualquier día (hoy en adelante), sin depender de la
  * fecha seleccionada: queda 1 cupo -> aviso; 0 -> agotada. Cada una se puede
- * marcar como vista (se recuerda en este navegador) o limpiar todas a la vez.
+ * marcar como vista o limpiar todas a la vez. Lo visto NO se guarda: al
+ * recargar la página las notificaciones vuelven a aparecer (modo pruebas).
  */
 export function CampanaNotificaciones() {
   const [abierto, setAbierto] = useState(false);
@@ -64,21 +45,19 @@ export function CampanaNotificaciones() {
   }, []);
 
   useEffect(() => {
-    setVistas(leerVistas());
     cargar();
   }, [cargar]);
 
   function marcarVista(a: Alerta) {
-    const siguiente = new Set(vistas).add(claveAlerta(a));
-    setVistas(siguiente);
-    guardarVistas(siguiente);
+    setVistas((prev) => new Set(prev).add(claveAlerta(a)));
   }
 
   function limpiar() {
-    const siguiente = new Set(vistas);
-    for (const a of alertas ?? []) siguiente.add(claveAlerta(a));
-    setVistas(siguiente);
-    guardarVistas(siguiente);
+    setVistas((prev) => {
+      const siguiente = new Set(prev);
+      for (const a of alertas ?? []) siguiente.add(claveAlerta(a));
+      return siguiente;
+    });
   }
 
   useEffect(() => {
