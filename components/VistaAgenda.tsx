@@ -37,53 +37,76 @@ export function VistaAgenda({ hoy }: { hoy: string }) {
   }, [fecha]);
 
   return (
-    <div className="space-y-5">
-      <div>
-        <label htmlFor="fecha" className="mb-1 block text-sm font-medium">
-          Fecha
-        </label>
-        <input
-          id="fecha"
-          type="date"
-          value={fecha}
-          onChange={(e) => setFecha(e.target.value)}
-          className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
-        />
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div>
+          <label htmlFor="fecha" className="mb-1.5 block text-sm font-medium text-slate-700">
+            Fecha
+          </label>
+          <input
+            id="fecha"
+            type="date"
+            value={fecha}
+            onChange={(e) => setFecha(e.target.value)}
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20"
+          />
+        </div>
+        {citas && (
+          <div className="rounded-xl bg-teal-50 px-4 py-2 text-right">
+            <p className="text-2xl font-bold leading-none text-teal-700">{citas.length}</p>
+            <p className="mt-1 text-xs font-medium text-teal-800">
+              {citas.length === 1 ? "cita" : "citas"} este día
+            </p>
+          </div>
+        )}
       </div>
 
       {error && (
-        <div role="alert" className="rounded-md border border-red-300 bg-red-50 p-4 text-sm text-red-900">
+        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           {error}
         </div>
       )}
 
-      {!error && citas === null && <p className="text-sm text-slate-500">Cargando...</p>}
+      {!error && citas === null && (
+        <div className="space-y-3" aria-busy="true">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-20 animate-pulse rounded-2xl bg-slate-200/70" />
+          ))}
+        </div>
+      )}
 
       {citas && citas.length === 0 && (
-        <p className="rounded-md border border-slate-200 bg-white p-6 text-center text-sm text-slate-600">
-          No hay citas para esta fecha.
-        </p>
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white/60 px-6 py-14 text-center">
+          <p className="text-4xl" aria-hidden="true">
+            🗓️
+          </p>
+          <p className="mt-3 font-medium text-slate-800">No hay citas para esta fecha</p>
+          <p className="mt-1 text-sm text-slate-500">Prueba con otro día para ver su agenda.</p>
+        </div>
       )}
 
       {citas && citas.length > 0 && (
-        <div>
-          <p className="mb-2 text-sm text-slate-600">
-            Total de citas: <strong>{citas.length}</strong>
-          </p>
-          <ul className="divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
-            {citas.map((c, i) => (
-              <li key={`${c.id}-${i}`} className="flex items-start gap-4 px-4 py-3">
-                <span className="w-14 pt-0.5 font-mono text-sm">{c.hora}</span>
-                <div className="text-sm">
-                  <p className="font-medium">{c.propietario}</p>
-                  <p className="text-slate-600">
-                    {c.mascota} ({c.especie}) · {c.servicio}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ul className="space-y-3">
+          {citas.map((c, i) => (
+            <li
+              key={`${c.id}-${i}`}
+              className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+            >
+              <div className="flex h-14 w-16 shrink-0 items-center justify-center rounded-xl bg-teal-600 font-mono text-base font-semibold text-white">
+                {c.hora}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate font-semibold">{c.propietario}</p>
+                <p className="truncate text-sm text-slate-600">
+                  {c.mascota} <span className="text-slate-400">({c.especie})</span>
+                </p>
+              </div>
+              <span className="ml-auto shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                {c.servicio}
+              </span>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
