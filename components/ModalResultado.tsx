@@ -79,10 +79,6 @@ export function ModalResultado({
           {mensaje}
         </p>
 
-        {rechazada && (
-          <p className="mt-3 text-xs text-slate-500">Tus datos se conservaron; solo cambia la franja.</p>
-        )}
-
         <button
           ref={boton}
           type="button"
