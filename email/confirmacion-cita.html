@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>Confirmación de tu cita</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:Arial,Helvetica,sans-serif;">
+
+  <!-- Texto de vista previa (se ve en la bandeja de entrada) -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#f1f5f9;">
+    Tu cita del {{1.fecha}} a las {{1.hora}} quedó agendada.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f1f5f9" style="background-color:#f1f5f9;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;">
+
+          <!-- Cabecera -->
+          <tr>
+            <td align="center" bgcolor="#0d9488" style="background-color:#0d9488;padding:32px 24px;">
+              <div style="font-size:40px;line-height:48px;">&#128062;</div>
+              <h1 style="margin:12px 0 0 0;font-size:24px;line-height:30px;color:#ffffff;font-weight:700;">
+                Tu cita está confirmada
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Saludo -->
+          <tr>
+            <td style="padding:32px 32px 8px 32px;">
+              <p style="margin:0 0 12px 0;font-size:18px;line-height:26px;color:#0f172a;font-weight:700;">
+                Hola, {{1.propietario}}
+              </p>
+              <p style="margin:0;font-size:15px;line-height:24px;color:#475569;">
+                Tu cita quedó agendada correctamente. Estos son los datos:
+              </p>
+            </td>
+          </tr>
+
+          <!-- Detalles de la cita -->
+          <tr>
+            <td style="padding:16px 32px 8px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f0fdfa;border:1px solid #99f6e4;border-radius:12px;">
+                <tr>
+                  <td style="padding:20px 24px;">
+
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="padding:8px 0;font-size:13px;line-height:18px;color:#0f766e;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;width:40%;">
+                          Fecha
+                        </td>
+                        <td style="padding:8px 0;font-size:16px;line-height:22px;color:#0f172a;font-weight:700;">
+                          {{1.fecha}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="border-top:1px solid #99f6e4;font-size:0;line-height:0;height:1px;">&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:8px 0;font-size:13px;line-height:18px;color:#0f766e;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">
+                          Hora
+                        </td>
+                        <td style="padding:8px 0;font-size:16px;line-height:22px;color:#0f172a;font-weight:700;">
+                          {{1.hora}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="border-top:1px solid #99f6e4;font-size:0;line-height:0;height:1px;">&nbsp;</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:8px 0;font-size:13px;line-height:18px;color:#0f766e;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">
+                          Servicio
+                        </td>
+                        <td style="padding:8px 0;font-size:16px;line-height:22px;color:#0f172a;font-weight:700;">
+                          {{1.servicio}}
+                        </td>
+                      </tr>
+                    </table>
+
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Mensaje final -->
+          <tr>
+            <td style="padding:16px 32px 32px 32px;">
+              <p style="margin:0;font-size:14px;line-height:22px;color:#475569;">
+                Te recomendamos llegar unos minutos antes. Si necesitas cambiar o cancelar tu cita,
+                responde a este correo.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Pie -->
+          <tr>
+            <td align="center" bgcolor="#f8fafc" style="background-color:#f8fafc;padding:20px 32px;border-top:1px solid #e2e8f0;">
+              <p style="margin:0;font-size:12px;line-height:18px;color:#94a3b8;">
+                Este es un mensaje automático de Agenda de citas. Gracias por confiar en nosotros.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
