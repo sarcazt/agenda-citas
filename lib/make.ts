@@ -1,4 +1,5 @@
 import { isMock } from "./config";
+import { guardarMock } from "./mock-store";
 import { respuestaMakeSchema, type Cita, type RespuestaMake } from "./schemas";
 
 const TIMEOUT_MS = 20_000;
@@ -63,5 +64,15 @@ export async function agendarEnMake(cita: Cita): Promise<RespuestaMake> {
 
   const parsed = respuestaMakeSchema.safeParse(cuerpo);
   if (!parsed.success) throw new MakeError("Respuesta de Make inválida");
+
+  // Make escribe la fila en la hoja; en modo simulado se guarda en memoria.
+  if (isMock()) {
+    guardarMock({
+      fecha: cita.fecha,
+      franja: cita.franja,
+      nombre: cita.nombre,
+      estado: parsed.data.estado,
+    });
+  }
   return parsed.data;
 }
