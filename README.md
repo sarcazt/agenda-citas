@@ -46,7 +46,7 @@ Aplicación web (Next.js, App Router, TypeScript, Tailwind) para agendar citas. 
 Cualquier otra cosa (código distinto de 200, JSON inválido, `estado` desconocido o más de 20 s de espera) se trata como error y el cliente ve un mensaje genérico.
 
 **Hoja de Google Sheets** (fila 1 = encabezados): `id_cita | fecha_solicitud | propietario | correo | mascota | especie | servicio | fecha | hora`.
-Make escribe las filas; la app solo las lee y filtra por `fecha`. Las columnas se ubican por el nombre del encabezado. `fecha` se acepta como `AAAA-MM-DD` o `D/M/AAAA`, y `hora` como `HH:MM` o `HH:MM:SS`. La hoja no guarda el estado de la cita, por eso `/agenda` no lo muestra.
+Make escribe las filas; la app solo las lee y filtra por `fecha`. Las columnas se ubican por el nombre del encabezado. `fecha` se acepta como `AAAA-MM-DD` o `D/M/AAAA`, y `hora` como `HH:MM` o `HH:MM:SS`. La columna `estado` decide qué se muestra: el calendario y los cupos cuentan solo las citas **Aprobada** (también `confirmada` y `con_alerta`); las `Rechazada` y las filas sin estado se ignoran.
 
 ## Variables de entorno
 
