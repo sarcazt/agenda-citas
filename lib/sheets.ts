@@ -76,25 +76,74 @@ function normalizarHora(valor: string): string {
   return m ? `${m[1].padStart(2, "0")}:${m[2]}` : valor.trim();
 }
 
-/**
- * Lee la hoja pública (cualquiera con el enlace puede ver) como CSV y devuelve
- * todas las citas, con la fecha (AAAA-MM-DD) y la hora (HH:MM) normalizadas.
- */
-export async function todasLasCitas(): Promise<CitaAgenda[]> {
+/** Descarga una pestaña de la hoja pública como CSV. `destino` es `sheet=<nombre>` o `gid=<id>`. */
+async function descargarCsv(destino: string): Promise<string[][]> {
   const sheetId = process.env.GOOGLE_SHEET_ID;
   if (!sheetId) throw new Error("Falta GOOGLE_SHEET_ID");
-  const tab = process.env.GOOGLE_SHEET_TAB || "citas";
 
   const url =
     `https://docs.google.com/spreadsheets/d/${encodeURIComponent(sheetId)}/gviz/tq` +
-    `?tqx=out:csv&sheet=${encodeURIComponent(tab)}`;
+    `?tqx=out:csv&${destino}`;
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`Google respondió ${res.status}`);
   if (!(res.headers.get("content-type") ?? "").includes("csv")) {
     throw new Error("La hoja no es pública o no se pudo leer como CSV");
   }
+  return parsearCsv(await res.text());
+}
 
-  const [encabezado = [], ...filas] = parsearCsv(await res.text());
+/** Cupo de una franja, tal como lo lleva Make en la pestaña de cupos. */
+export type CupoFranja = {
+  fecha: string;
+  franja: string;
+  cupo: number;
+  ocupados: number;
+  libres: number;
+};
+
+/**
+ * Lee la pestaña de cupos (columnas: franja, fecha, hora, cupo, ocupados).
+ * Es la que Make mantiene al aprobar o rechazar, así que es la fuente de verdad
+ * para las notificaciones. Se identifica por `GOOGLE_SHEET_CUPOS_GID` (por
+ * defecto 0, la primera pestaña).
+ */
+export async function cuposPorFranja(): Promise<CupoFranja[]> {
+  const gid = process.env.GOOGLE_SHEET_CUPOS_GID || "0";
+  const [encabezado = [], ...filas] = await descargarCsv(`gid=${encodeURIComponent(gid)}`);
+
+  const col = (nombre: string) => encabezado.findIndex((h) => h.trim() === nombre);
+  const iFecha = col("fecha");
+  const iHora = col("hora");
+  const iCupo = col("cupo");
+  const iOcupados = col("ocupados");
+  if ([iFecha, iHora, iCupo, iOcupados].includes(-1)) {
+    throw new Error("La pestaña de cupos no tiene los encabezados esperados (fecha, hora, cupo, ocupados)");
+  }
+
+  const cupos: CupoFranja[] = [];
+  for (const fila of filas) {
+    const fecha = normalizarFecha((fila[iFecha] ?? "").trim());
+    const cupo = Number.parseInt((fila[iCupo] ?? "").trim(), 10);
+    const ocupados = Number.parseInt((fila[iOcupados] ?? "").trim(), 10) || 0;
+    if (!fecha || !Number.isFinite(cupo)) continue;
+    cupos.push({
+      fecha,
+      franja: normalizarHora((fila[iHora] ?? "").trim()),
+      cupo,
+      ocupados,
+      libres: Math.max(cupo - ocupados, 0),
+    });
+  }
+  return cupos;
+}
+
+/**
+ * Lee la hoja pública (cualquiera con el enlace puede ver) como CSV y devuelve
+ * todas las citas, con la fecha (AAAA-MM-DD) y la hora (HH:MM) normalizadas.
+ */
+export async function todasLasCitas(): Promise<CitaAgenda[]> {
+  const tab = process.env.GOOGLE_SHEET_TAB || "citas";
+  const [encabezado = [], ...filas] = await descargarCsv(`sheet=${encodeURIComponent(tab)}`);
 
   // Las columnas se ubican por el nombre del encabezado.
   const col = (nombre: string) => encabezado.findIndex((h) => h.trim() === nombre);
