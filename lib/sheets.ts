@@ -66,9 +66,9 @@ function normalizarHora(valor: string): string {
 
 /**
  * Lee la hoja pública (cualquiera con el enlace puede ver) como CSV y devuelve
- * las citas de una fecha (AAAA-MM-DD), ordenadas por hora.
+ * todas las citas, con la fecha (AAAA-MM-DD) y la hora (HH:MM) normalizadas.
  */
-export async function citasPorFecha(fecha: string): Promise<CitaAgenda[]> {
+export async function todasLasCitas(): Promise<CitaAgenda[]> {
   const sheetId = process.env.GOOGLE_SHEET_ID;
   if (!sheetId) throw new Error("Falta GOOGLE_SHEET_ID");
   const tab = process.env.GOOGLE_SHEET_TAB || "citas";
@@ -96,7 +96,8 @@ export async function citasPorFecha(fecha: string): Promise<CitaAgenda[]> {
 
   const citas: CitaAgenda[] = [];
   for (const fila of filas) {
-    if (normalizarFecha(celda(fila, "fecha")) !== fecha) continue;
+    const fecha = normalizarFecha(celda(fila, "fecha"));
+    if (!fecha) continue;
     citas.push({
       id: celda(fila, "id_cita"),
       fecha,
@@ -108,5 +109,11 @@ export async function citasPorFecha(fecha: string): Promise<CitaAgenda[]> {
     });
   }
 
-  return citas.sort((a, b) => a.hora.localeCompare(b.hora));
+  return citas;
+}
+
+/** Citas de una fecha (AAAA-MM-DD), ordenadas por hora. */
+export async function citasPorFecha(fecha: string): Promise<CitaAgenda[]> {
+  const citas = await todasLasCitas();
+  return citas.filter((c) => c.fecha === fecha).sort((a, b) => a.hora.localeCompare(b.hora));
 }
