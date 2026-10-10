@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
   const campos: Record<string, string[]> = {};
   if (cita.fecha < hoyBogota()) campos.fecha = ["La fecha no puede ser pasada"];
-  if (!getFranjas().includes(cita.franja)) campos.franja = ["Franja no disponible"];
+  if (!getFranjas().includes(cita.hora)) campos.hora = ["Franja no disponible"];
   if (Object.keys(campos).length > 0) {
     return Response.json({ ok: false, error: "Datos no válidos", campos }, { status: 400 });
   }

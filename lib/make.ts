@@ -8,7 +8,7 @@ export class MakeError extends Error {}
 
 /** Respuestas simuladas por franja (MAKE_MOCK=true). */
 function simular(cita: Cita): unknown {
-  switch (cita.franja) {
+  switch (cita.hora) {
     case "09:00":
       return { estado: "confirmada", mensaje: "Tu cita quedó confirmada.", cupos_libres: 2 };
     case "10:00":
@@ -69,8 +69,8 @@ export async function agendarEnMake(cita: Cita): Promise<RespuestaMake> {
   if (isMock()) {
     guardarMock({
       fecha: cita.fecha,
-      franja: cita.franja,
-      nombre: cita.nombre,
+      franja: cita.hora,
+      nombre: cita.propietario,
       estado: parsed.data.estado,
     });
   }

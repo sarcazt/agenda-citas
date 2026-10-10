@@ -18,13 +18,18 @@ Aplicación web (Next.js, App Router, TypeScript, Tailwind) para agendar citas. 
 
 ```json
 {
-  "nombre": "string",
-  "correo": "string",
-  "fecha": "YYYY-MM-DD",
-  "franja": "HH:mm",
-  "observaciones": "string o vacío"
+  "propietario": "María López",
+  "correo": "maria@example.com",
+  "mascota": "Luna",
+  "especie": "Gato",
+  "servicio": "Consulta general",
+  "fecha": "2026-10-14",
+  "hora": "10:00",
+  "observaciones": "string o vacío (campo extra, Make puede ignorarlo)"
 }
 ```
+
+`fecha` (`AAAA-MM-DD`) y `hora` (`HH:MM`) llegan en esos formatos exactos para que Make construya la clave de franja y la busque en Google Sheets.
 
 **Make debe responder** (módulo Webhook response, código 200, JSON):
 
@@ -74,6 +79,8 @@ Con `MAKE_MOCK=true`, `/api/agendar` responde según la franja:
 | `14:00` | error (respuesta inválida) |
 | `15:00` | error (tiempo agotado) |
 | otras | `confirmada` |
+
+La franja se toma del campo `hora`.
 
 ## Desarrollo
 

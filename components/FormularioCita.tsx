@@ -5,7 +5,7 @@ import { useState } from "react";
 type Estado = "confirmada" | "con_alerta" | "rechazada";
 
 type Resultado =
-  | { tipo: "exito"; estado: Estado; mensaje: string; cuposLibres: number; fecha: string; franja: string }
+  | { tipo: "exito"; estado: Estado; mensaje: string; cuposLibres: number; fecha: string; hora: string }
   | { tipo: "error"; mensaje: string };
 
 const ETIQUETAS: Record<Estado, string> = {
@@ -21,13 +21,16 @@ const ESTILOS: Record<Estado, string> = {
 };
 
 const MENSAJE_RECHAZADA = "Para esa franja no se puede agendar una cita, elige otra franja.";
-const ERROR_GENERICO ="No se pudo procesar la cita. Inténtalo de nuevo.";
+const ERROR_GENERICO = "No se pudo procesar la cita. Inténtalo de nuevo.";
 
 export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: string }) {
-  const [nombre, setNombre] = useState("");
+  const [propietario, setPropietario] = useState("");
   const [correo, setCorreo] = useState("");
+  const [mascota, setMascota] = useState("");
+  const [especie, setEspecie] = useState("");
+  const [servicio, setServicio] = useState("");
   const [fecha, setFecha] = useState(hoy);
-  const [franja, setFranja] = useState("");
+  const [hora, setHora] = useState("");
   const [observaciones, setObservaciones] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [resultado, setResultado] = useState<Resultado | null>(null);
@@ -35,12 +38,15 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
 
   function validar(): Record<string, string> {
     const e: Record<string, string> = {};
-    if (!nombre.trim()) e.nombre = "El nombre es obligatorio";
+    if (!propietario.trim()) e.propietario = "El nombre del propietario es obligatorio";
     if (!correo.trim()) e.correo = "El correo es obligatorio";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim())) e.correo = "Correo no válido";
+    if (!mascota.trim()) e.mascota = "El nombre de la mascota es obligatorio";
+    if (!especie.trim()) e.especie = "La especie es obligatoria";
+    if (!servicio.trim()) e.servicio = "El servicio es obligatorio";
     if (!fecha) e.fecha = "La fecha es obligatoria";
     else if (fecha < hoy) e.fecha = "La fecha no puede ser pasada";
-    if (!franja) e.franja = "Selecciona una franja";
+    if (!hora) e.hora = "Selecciona una franja";
     return e;
   }
 
@@ -58,7 +64,16 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
       const res = await fetch("/api/agendar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre, correo, fecha, franja, observaciones }),
+        body: JSON.stringify({
+          propietario,
+          correo,
+          mascota,
+          especie,
+          servicio,
+          fecha,
+          hora,
+          observaciones,
+        }),
       });
       const data = await res.json();
 
@@ -75,7 +90,7 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
           mensaje: data.mensaje,
           cuposLibres: data.cupos_libres,
           fecha,
-          franja,
+          hora,
         });
       } else {
         setResultado({ tipo: "error", mensaje: ERROR_GENERICO });
@@ -88,6 +103,8 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
   }
 
   const campo = "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm";
+  const etiqueta = "mb-1 block text-sm font-medium";
+  const msgError = "mt-1 text-xs text-red-700";
 
   return (
     <div className="space-y-6">
@@ -102,7 +119,7 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
               <dt className="font-medium">Fecha</dt>
               <dd>{resultado.fecha}</dd>
               <dt className="font-medium">Franja</dt>
-              <dd>{resultado.franja}</dd>
+              <dd>{resultado.hora}</dd>
               <dt className="font-medium">Cupos libres</dt>
               <dd>{resultado.cuposLibres}</dd>
             </dl>
@@ -119,31 +136,82 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
       )}
 
       <form onSubmit={enviar} noValidate className="space-y-4 rounded-md border border-slate-200 bg-white p-5">
-        <div>
-          <label htmlFor="nombre" className="mb-1 block text-sm font-medium">
-            Nombre del dueño
-          </label>
-          <input id="nombre" className={campo} value={nombre} onChange={(e) => setNombre(e.target.value)} />
-          {errores.nombre && <p className="mt-1 text-xs text-red-700">{errores.nombre}</p>}
-        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="propietario" className={etiqueta}>
+              Nombre del propietario
+            </label>
+            <input
+              id="propietario"
+              className={campo}
+              value={propietario}
+              onChange={(e) => setPropietario(e.target.value)}
+            />
+            {errores.propietario && <p className={msgError}>{errores.propietario}</p>}
+          </div>
 
-        <div>
-          <label htmlFor="correo" className="mb-1 block text-sm font-medium">
-            Correo electrónico
-          </label>
-          <input
-            id="correo"
-            type="email"
-            className={campo}
-            value={correo}
-            onChange={(e) => setCorreo(e.target.value)}
-          />
-          {errores.correo && <p className="mt-1 text-xs text-red-700">{errores.correo}</p>}
+          <div>
+            <label htmlFor="correo" className={etiqueta}>
+              Correo electrónico
+            </label>
+            <input
+              id="correo"
+              type="email"
+              className={campo}
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+            />
+            {errores.correo && <p className={msgError}>{errores.correo}</p>}
+          </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label htmlFor="fecha" className="mb-1 block text-sm font-medium">
+            <label htmlFor="mascota" className={etiqueta}>
+              Nombre de la mascota
+            </label>
+            <input
+              id="mascota"
+              className={campo}
+              placeholder="Luna"
+              value={mascota}
+              onChange={(e) => setMascota(e.target.value)}
+            />
+            {errores.mascota && <p className={msgError}>{errores.mascota}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="especie" className={etiqueta}>
+              Especie
+            </label>
+            <input
+              id="especie"
+              className={campo}
+              placeholder="Gato"
+              value={especie}
+              onChange={(e) => setEspecie(e.target.value)}
+            />
+            {errores.especie && <p className={msgError}>{errores.especie}</p>}
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="servicio" className={etiqueta}>
+            Servicio
+          </label>
+          <input
+            id="servicio"
+            className={campo}
+            placeholder="Consulta general"
+            value={servicio}
+            onChange={(e) => setServicio(e.target.value)}
+          />
+          {errores.servicio && <p className={msgError}>{errores.servicio}</p>}
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="fecha" className={etiqueta}>
               Fecha
             </label>
             <input
@@ -154,14 +222,14 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
             />
-            {errores.fecha && <p className="mt-1 text-xs text-red-700">{errores.fecha}</p>}
+            {errores.fecha && <p className={msgError}>{errores.fecha}</p>}
           </div>
 
           <div>
-            <label htmlFor="franja" className="mb-1 block text-sm font-medium">
+            <label htmlFor="hora" className={etiqueta}>
               Franja horaria
             </label>
-            <select id="franja" className={campo} value={franja} onChange={(e) => setFranja(e.target.value)}>
+            <select id="hora" className={campo} value={hora} onChange={(e) => setHora(e.target.value)}>
               <option value="">Selecciona una franja</option>
               {franjas.map((f) => (
                 <option key={f} value={f}>
@@ -169,12 +237,12 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
                 </option>
               ))}
             </select>
-            {errores.franja && <p className="mt-1 text-xs text-red-700">{errores.franja}</p>}
+            {errores.hora && <p className={msgError}>{errores.hora}</p>}
           </div>
         </div>
 
         <div>
-          <label htmlFor="observaciones" className="mb-1 block text-sm font-medium">
+          <label htmlFor="observaciones" className={etiqueta}>
             Observaciones <span className="font-normal text-slate-500">(opcional)</span>
           </label>
           <textarea
