@@ -1,24 +1,7 @@
 "use client";
 
-import { useState } from "react";
-
-type Estado = "confirmada" | "con_alerta" | "rechazada";
-
-type Resultado =
-  | { tipo: "exito"; estado: Estado; mensaje: string; cuposLibres: number; fecha: string; hora: string }
-  | { tipo: "error"; mensaje: string };
-
-const ETIQUETAS: Record<Estado, string> = {
-  confirmada: "Cita confirmada",
-  con_alerta: "Cita agendada con alerta",
-  rechazada: "Franja no disponible",
-};
-
-const ESTILOS: Record<Estado, string> = {
-  confirmada: "border-green-300 bg-green-50 text-green-900",
-  con_alerta: "border-amber-300 bg-amber-50 text-amber-900",
-  rechazada: "border-red-300 bg-red-50 text-red-900",
-};
+import { useCallback, useState } from "react";
+import { ModalResultado, type Resultado } from "./ModalResultado";
 
 // Datos de prueba para llenar el formulario con un clic. `hora` es un índice
 // dentro de las franjas configuradas, así siempre queda una franja válida.
@@ -61,7 +44,6 @@ const PRUEBAS = [
   },
 ];
 
-const MENSAJE_RECHAZADA ="Para esa franja no se puede agendar una cita, elige otra franja.";
 const ERROR_GENERICO = "No se pudo procesar la cita. Inténtalo de nuevo.";
 
 export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: string }) {
@@ -90,6 +72,14 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
     if (!hora) e.hora = "Selecciona una franja";
     return e;
   }
+
+  const cerrarModal = useCallback(() => {
+    // Si no hubo cupo, el foco vuelve a la franja para elegir otra.
+    if (resultado?.tipo === "exito" && resultado.estado === "rechazada") {
+      setTimeout(() => document.getElementById("hora")?.focus(), 0);
+    }
+    setResultado(null);
+  }, [resultado]);
 
   function cargarPrueba(indice: string) {
     const p = PRUEBAS[Number(indice)];
@@ -164,32 +154,7 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
 
   return (
     <div className="space-y-6">
-      {resultado?.tipo === "exito" && (
-        <div role="status" className={`rounded-md border p-4 ${ESTILOS[resultado.estado]}`}>
-          <p className="font-semibold">{ETIQUETAS[resultado.estado]}</p>
-          <p className="mt-1 text-sm">
-            {resultado.estado === "rechazada" ? MENSAJE_RECHAZADA : resultado.mensaje}
-          </p>
-          {resultado.estado !== "rechazada" ? (
-            <dl className="mt-3 grid grid-cols-2 gap-1 text-sm">
-              <dt className="font-medium">Fecha</dt>
-              <dd>{resultado.fecha}</dd>
-              <dt className="font-medium">Franja</dt>
-              <dd>{resultado.hora}</dd>
-              <dt className="font-medium">Cupos libres</dt>
-              <dd>{resultado.cuposLibres}</dd>
-            </dl>
-          ) : (
-            <p className="mt-2 text-sm">Tus datos se conservaron; solo cambia la franja y vuelve a enviar.</p>
-          )}
-        </div>
-      )}
-
-      {resultado?.tipo === "error" && (
-        <div role="alert" className="rounded-md border border-red-300 bg-red-50 p-4 text-sm text-red-900">
-          {resultado.mensaje}
-        </div>
-      )}
+      <ModalResultado resultado={resultado} onCerrar={cerrarModal} />
 
       <div className="rounded-md border border-dashed border-slate-300 bg-white p-4">
         <label htmlFor="prueba" className={etiqueta}>
