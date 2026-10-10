@@ -11,7 +11,7 @@ type Resultado =
 const ETIQUETAS: Record<Estado, string> = {
   confirmada: "Cita confirmada",
   con_alerta: "Cita agendada con alerta",
-  rechazada: "Sin cupo en esta franja",
+  rechazada: "Franja no disponible",
 };
 
 const ESTILOS: Record<Estado, string> = {
@@ -20,7 +20,8 @@ const ESTILOS: Record<Estado, string> = {
   rechazada: "border-red-300 bg-red-50 text-red-900",
 };
 
-const ERROR_GENERICO = "No se pudo procesar la cita. Inténtalo de nuevo.";
+const MENSAJE_RECHAZADA = "Para esa franja no se puede agendar una cita, elige otra franja.";
+const ERROR_GENERICO ="No se pudo procesar la cita. Inténtalo de nuevo.";
 
 export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: string }) {
   const [nombre, setNombre] = useState("");
@@ -93,7 +94,9 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
       {resultado?.tipo === "exito" && (
         <div role="status" className={`rounded-md border p-4 ${ESTILOS[resultado.estado]}`}>
           <p className="font-semibold">{ETIQUETAS[resultado.estado]}</p>
-          <p className="mt-1 text-sm">{resultado.mensaje}</p>
+          <p className="mt-1 text-sm">
+            {resultado.estado === "rechazada" ? MENSAJE_RECHAZADA : resultado.mensaje}
+          </p>
           {resultado.estado !== "rechazada" ? (
             <dl className="mt-3 grid grid-cols-2 gap-1 text-sm">
               <dt className="font-medium">Fecha</dt>
@@ -104,7 +107,7 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
               <dd>{resultado.cuposLibres}</dd>
             </dl>
           ) : (
-            <p className="mt-2 text-sm">Elige otra franja y vuelve a enviar; tus datos se conservaron.</p>
+            <p className="mt-2 text-sm">Tus datos se conservaron; solo cambia la franja y vuelve a enviar.</p>
           )}
         </div>
       )}

@@ -20,7 +20,7 @@ function simular(cita: Cita): unknown {
     case "11:00":
       return {
         estado: "rechazada",
-        mensaje: "No hay cupo en esta franja. Elige otra.",
+        mensaje: "Para esa franja no se puede agendar una cita, elige otra franja.",
         cupos_libres: 0,
       };
     case "14:00":
