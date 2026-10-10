@@ -13,7 +13,6 @@ export const citaSchema = z.object({
   servicio: z.string().trim().min(1, "El servicio es obligatorio").max(100),
   fecha: z.string().refine(esFechaValida, "Fecha no válida"),
   hora: z.string().regex(/^\d{2}:\d{2}$/, "Selecciona una franja"),
-  observaciones: z.string().trim().max(500).default(""),
 });
 export type Cita = z.infer<typeof citaSchema>;
 

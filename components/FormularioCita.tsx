@@ -54,7 +54,6 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
   const [servicio, setServicio] = useState("");
   const [fecha, setFecha] = useState(hoy);
   const [hora, setHora] = useState("");
-  const [observaciones, setObservaciones] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [resultado, setResultado] = useState<Resultado | null>(null);
   const [errores, setErrores] = useState<Record<string, string>>({});
@@ -91,7 +90,6 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
     setServicio(p.servicio);
     setFecha(hoy);
     setHora(franjas[p.hora % franjas.length] ?? "");
-    setObservaciones("");
     setErrores({});
     setResultado(null);
   }
@@ -118,7 +116,6 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
           servicio,
           fecha,
           hora,
-          observaciones,
         }),
       });
       const data = await res.json();
@@ -276,20 +273,6 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
             </select>
             {errores.hora && <p className={msgError}>{errores.hora}</p>}
           </div>
-        </div>
-
-        <div>
-          <label htmlFor="observaciones" className={etiqueta}>
-            Observaciones <span className="font-normal text-slate-500">(opcional)</span>
-          </label>
-          <textarea
-            id="observaciones"
-            rows={3}
-            maxLength={500}
-            className={campo}
-            value={observaciones}
-            onChange={(e) => setObservaciones(e.target.value)}
-          />
         </div>
 
         <button
