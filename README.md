@@ -57,7 +57,8 @@ Copia `.env.example` a `.env.local` para desarrollo.
 | `MAKE_WEBHOOK_URL` | URL del webhook del Escenario 1. Solo se usa en el servidor. |
 | `GOOGLE_SHEET_ID` | ID de la hoja (la parte entre `/d/` y `/edit` en su URL). |
 | `GOOGLE_SHEET_TAB` | Nombre de la pestaña. Por defecto `citas`. |
-| `CUPO_POR_FRANJA` | Cupo por franja (solo la usaría `/franjas`, que no está implementada). |
+| `GOOGLE_SHEET_CUPOS_GID` | `gid` de la pestaña de cupos (columnas `franja, fecha, hora, cupo, ocupados`). Por defecto `0`, la primera pestaña. |
+| `CUPO_POR_FRANJA` | Ya no se usa: el cupo y los ocupados salen de la pestaña de cupos. |
 | `FRANJAS` | Franjas separadas por coma, p. ej. `08:00,09:00,10:00`. |
 
 ### Despliegue en Vercel (sin panel de variables)
