@@ -7,7 +7,7 @@ Aplicación web (Next.js, App Router, TypeScript, Tailwind) para agendar citas. 
 | Ruta | Descripción |
 | --- | --- |
 | `/agendar` | Formulario de cita. Muestra `confirmada`, `con_alerta`, `rechazada` o un error genérico. |
-| `/agenda` | Citas de una fecha (por defecto hoy en America/Bogota), con estado y total. No muestra correos. |
+| `/agenda` | Citas de una fecha (por defecto hoy en America/Bogota), con hora, propietario, mascota y servicio, y el total. No muestra correos. |
 | `POST /api/agendar` | Valida con zod, llama al webhook de Make (máx. 20 s) y devuelve la respuesta normalizada. |
 | `GET /api/agenda?fecha=YYYY-MM-DD` | Lee la hoja y devuelve las citas de la fecha, sin correo. |
 | `GET /api/health` | Devuelve `{ "ok": true }` (healthcheck). |
@@ -45,8 +45,8 @@ Aplicación web (Next.js, App Router, TypeScript, Tailwind) para agendar citas. 
 
 Cualquier otra cosa (código distinto de 200, JSON inválido, `estado` desconocido o más de 20 s de espera) se trata como error y el cliente ve un mensaje genérico.
 
-**Hoja de Google Sheets** (fila 1 = encabezados): `id | fecha | franja | nombre | correo | estado | creado_en`.
-Make escribe las filas; la app solo las lee y filtra por `fecha`. Las columnas se ubican por el nombre del encabezado, y la columna `fecha` debe guardar texto `YYYY-MM-DD` (formato de celda "Texto plano" para que Sheets no la convierta en fecha).
+**Hoja de Google Sheets** (fila 1 = encabezados): `id_cita | fecha_solicitud | propietario | correo | mascota | especie | servicio | fecha | hora`.
+Make escribe las filas; la app solo las lee y filtra por `fecha`. Las columnas se ubican por el nombre del encabezado. `fecha` se acepta como `AAAA-MM-DD` o `D/M/AAAA`, y `hora` como `HH:MM` o `HH:MM:SS`. La hoja no guarda el estado de la cita, por eso `/agenda` no lo muestra.
 
 ## Variables de entorno
 
@@ -56,17 +56,13 @@ Copia `.env.example` a `.env.local` para desarrollo.
 | --- | --- |
 | `MAKE_WEBHOOK_URL` | URL del webhook del Escenario 1. Solo se usa en el servidor. |
 | `GOOGLE_SHEET_ID` | ID de la hoja (la parte entre `/d/` y `/edit` en su URL). |
-| `GOOGLE_SHEET_TAB` | Nombre de la pestaña. Por defecto `Citas`. |
-| `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Correo de la cuenta de servicio. |
-| `GOOGLE_PRIVATE_KEY` | Clave privada de la cuenta de servicio. Acepta `\n` escapados. |
-| `CUPO_POR_FRANJA` | Cupo por franja (solo la usará `/franjas`). |
+| `GOOGLE_SHEET_TAB` | Nombre de la pestaña. Por defecto `citas`. |
+| `CUPO_POR_FRANJA` | Cupo por franja (solo la usaría `/franjas`, que no está implementada). |
 | `FRANJAS` | Franjas separadas por coma, p. ej. `08:00,09:00,10:00`. |
 
-### Cuenta de servicio de Google
+### Acceso a la hoja
 
-1. En Google Cloud, habilita la **Google Sheets API** y crea una cuenta de servicio.
-2. Genera una clave JSON y copia `client_email` y `private_key` a las variables.
-3. Comparte la hoja con el correo de la cuenta de servicio (permiso de lector basta).
+La app lee la hoja como CSV público, sin credenciales. Por eso la hoja debe estar compartida como **"Cualquier persona con el enlace puede ver"**. Ten en cuenta que, al ser pública, cualquiera con el enlace ve también la columna `correo`; la app solo la oculta en `/agenda`.
 
 ## Desarrollo
 
@@ -90,8 +86,7 @@ La imagen no contiene secretos: todo llega por variables de entorno en tiempo de
 
 1. En Dokploy crea una **Application** y conéctala al repositorio de GitHub (rama `main`).
 2. En *Build Type* elige **Dockerfile** (ruta `./Dockerfile`).
-3. En la pestaña **Environment** pega las variables del `.env.example` con sus valores reales. Para `GOOGLE_PRIVATE_KEY` pega la clave en una sola línea con los `\n` literales.
-4. En **Domains** asigna el dominio y el puerto `3000`.
+3. En la pestaña **Environment** pega las variables del `.env.example` con sus valores reales.4. En **Domains** asigna el dominio y el puerto `3000`.
 5. Pulsa **Deploy**. Comprueba `https://<tu-dominio>/api/health`.
 
 ### Auto Deploy desde GitHub

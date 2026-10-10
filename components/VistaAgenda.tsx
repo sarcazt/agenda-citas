@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 
-type Estado = "confirmada" | "con_alerta" | "rechazada";
-type Cita = { id: string; franja: string; nombre: string; estado: Estado };
-
-const ETIQUETAS: Record<Estado, { texto: string; estilo: string }> = {
-  confirmada: { texto: "Confirmada", estilo: "bg-green-100 text-green-800" },
-  con_alerta: { texto: "Con alerta", estilo: "bg-amber-100 text-amber-800" },
-  rechazada: { texto: "Rechazada", estilo: "bg-red-100 text-red-800" },
+type Cita = {
+  id: string;
+  hora: string;
+  propietario: string;
+  mascota: string;
+  especie: string;
+  servicio: string;
 };
 
 export function VistaAgenda({ hoy }: { hoy: string }) {
@@ -72,14 +72,14 @@ export function VistaAgenda({ hoy }: { hoy: string }) {
           </p>
           <ul className="divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
             {citas.map((c, i) => (
-              <li key={`${c.id}-${i}`} className="flex items-center justify-between gap-4 px-4 py-3">
-                <div className="flex items-baseline gap-4">
-                  <span className="w-14 font-mono text-sm">{c.franja}</span>
-                  <span className="text-sm">{c.nombre}</span>
+              <li key={`${c.id}-${i}`} className="flex items-start gap-4 px-4 py-3">
+                <span className="w-14 pt-0.5 font-mono text-sm">{c.hora}</span>
+                <div className="text-sm">
+                  <p className="font-medium">{c.propietario}</p>
+                  <p className="text-slate-600">
+                    {c.mascota} ({c.especie}) · {c.servicio}
+                  </p>
                 </div>
-                <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${ETIQUETAS[c.estado].estilo}`}>
-                  {ETIQUETAS[c.estado].texto}
-                </span>
               </li>
             ))}
           </ul>
