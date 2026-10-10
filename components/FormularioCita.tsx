@@ -20,7 +20,48 @@ const ESTILOS: Record<Estado, string> = {
   rechazada: "border-red-300 bg-red-50 text-red-900",
 };
 
-const MENSAJE_RECHAZADA = "Para esa franja no se puede agendar una cita, elige otra franja.";
+// Datos de prueba para llenar el formulario con un clic. `hora` es un índice
+// dentro de las franjas configuradas, así siempre queda una franja válida.
+const PRUEBAS = [
+  {
+    etiqueta: "María López · Luna (Gato) · Consulta general",
+    propietario: "María López",
+    correo: "maria@example.com",
+    mascota: "Luna",
+    especie: "Gato",
+    servicio: "Consulta general",
+    hora: 2,
+  },
+  {
+    etiqueta: "Carlos Pérez · Rocky (Perro) · Vacunación",
+    propietario: "Carlos Pérez",
+    correo: "carlos@example.com",
+    mascota: "Rocky",
+    especie: "Perro",
+    servicio: "Vacunación",
+    hora: 0,
+  },
+  {
+    etiqueta: "Ana Gómez · Kiwi (Ave) · Control",
+    propietario: "Ana Gómez",
+    correo: "ana@example.com",
+    mascota: "Kiwi",
+    especie: "Ave",
+    servicio: "Control",
+    hora: 4,
+  },
+  {
+    etiqueta: "Juan Torres · Thor (Perro) · Cirugía",
+    propietario: "Juan Torres",
+    correo: "juan@example.com",
+    mascota: "Thor",
+    especie: "Perro",
+    servicio: "Cirugía",
+    hora: 1,
+  },
+];
+
+const MENSAJE_RECHAZADA ="Para esa franja no se puede agendar una cita, elige otra franja.";
 const ERROR_GENERICO = "No se pudo procesar la cita. Inténtalo de nuevo.";
 
 export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: string }) {
@@ -48,6 +89,21 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
     else if (fecha < hoy) e.fecha = "La fecha no puede ser pasada";
     if (!hora) e.hora = "Selecciona una franja";
     return e;
+  }
+
+  function cargarPrueba(indice: string) {
+    const p = PRUEBAS[Number(indice)];
+    if (!p) return;
+    setPropietario(p.propietario);
+    setCorreo(p.correo);
+    setMascota(p.mascota);
+    setEspecie(p.especie);
+    setServicio(p.servicio);
+    setFecha(hoy);
+    setHora(franjas[p.hora % franjas.length] ?? "");
+    setObservaciones("");
+    setErrores({});
+    setResultado(null);
   }
 
   async function enviar(ev: React.FormEvent) {
@@ -134,6 +190,25 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
           {resultado.mensaje}
         </div>
       )}
+
+      <div className="rounded-md border border-dashed border-slate-300 bg-white p-4">
+        <label htmlFor="prueba" className={etiqueta}>
+          Datos de prueba
+        </label>
+        <select
+          id="prueba"
+          className={campo}
+          value=""
+          onChange={(e) => cargarPrueba(e.target.value)}
+        >
+          <option value="">Selecciona para llenar el formulario...</option>
+          {PRUEBAS.map((p, i) => (
+            <option key={p.etiqueta} value={i}>
+              {p.etiqueta}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <form onSubmit={enviar} noValidate className="space-y-4 rounded-md border border-slate-200 bg-white p-5">
         <div className="grid gap-4 sm:grid-cols-2">
