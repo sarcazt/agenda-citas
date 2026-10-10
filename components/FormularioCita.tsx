@@ -10,6 +10,7 @@ const PRUEBAS = [
     etiqueta: "María López · Luna (Gato) · Consulta general",
     propietario: "María López",
     correo: "maria@example.com",
+    telefono: "3187141190",
     mascota: "Luna",
     especie: "Gato",
     servicio: "Consulta general",
@@ -19,6 +20,7 @@ const PRUEBAS = [
     etiqueta: "Carlos Pérez · Rocky (Perro) · Vacunación",
     propietario: "Carlos Pérez",
     correo: "carlos@example.com",
+    telefono: "3187141190",
     mascota: "Rocky",
     especie: "Perro",
     servicio: "Vacunación",
@@ -28,6 +30,7 @@ const PRUEBAS = [
     etiqueta: "Ana Gómez · Kiwi (Ave) · Control",
     propietario: "Ana Gómez",
     correo: "ana@example.com",
+    telefono: "3187141190",
     mascota: "Kiwi",
     especie: "Ave",
     servicio: "Control",
@@ -37,6 +40,7 @@ const PRUEBAS = [
     etiqueta: "Juan Torres · Thor (Perro) · Cirugía",
     propietario: "Juan Torres",
     correo: "juan@example.com",
+    telefono: "3187141190",
     mascota: "Thor",
     especie: "Perro",
     servicio: "Cirugía",
@@ -90,6 +94,7 @@ function Seccion({ numero, titulo, children }: { numero: number; titulo: string;
 export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: string }) {
   const [propietario, setPropietario] = useState("");
   const [correo, setCorreo] = useState("");
+  const [telefono, setTelefono] = useState("");
   const [mascota, setMascota] = useState("");
   const [especie, setEspecie] = useState("");
   const [servicio, setServicio] = useState("");
@@ -104,6 +109,8 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
     if (!propietario.trim()) e.propietario = "El nombre del propietario es obligatorio";
     if (!correo.trim()) e.correo = "El correo es obligatorio";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim())) e.correo = "Correo no válido";
+    if (!telefono.trim()) e.telefono = "El teléfono es obligatorio";
+    else if (!/^\+?[0-9][0-9\s-]{6,14}$/.test(telefono.trim())) e.telefono = "Teléfono no válido";
     if (!mascota.trim()) e.mascota = "El nombre de la mascota es obligatorio";
     if (!especie.trim()) e.especie = "La especie es obligatoria";
     if (!servicio.trim()) e.servicio = "El servicio es obligatorio";
@@ -126,6 +133,7 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
     if (!p) return;
     setPropietario(p.propietario);
     setCorreo(p.correo);
+    setTelefono(p.telefono);
     setMascota(p.mascota);
     setEspecie(p.especie);
     setServicio(p.servicio);
@@ -152,6 +160,7 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
         body: JSON.stringify({
           propietario,
           correo,
+          telefono,
           mascota,
           especie,
           servicio,
@@ -232,6 +241,17 @@ export function FormularioCita({ franjas, hoy }: { franjas: string[]; hoy: strin
                 placeholder="maria@correo.com"
                 value={correo}
                 onChange={(e) => setCorreo(e.target.value)}
+              />
+            </Campo>
+            <Campo id="telefono" etiqueta="Teléfono" error={errores.telefono}>
+              <input
+                id="telefono"
+                type="tel"
+                inputMode="tel"
+                className={clase("telefono")}
+                placeholder="3001234567"
+                value={telefono}
+                onChange={(e) => setTelefono(e.target.value)}
               />
             </Campo>
           </div>

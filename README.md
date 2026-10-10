@@ -20,6 +20,7 @@ Aplicación web (Next.js, App Router, TypeScript, Tailwind) para agendar citas. 
 {
   "propietario": "María López",
   "correo": "maria@example.com",
+  "telefono": "3001234567",
   "mascota": "Luna",
   "especie": "Gato",
   "servicio": "Consulta general",
