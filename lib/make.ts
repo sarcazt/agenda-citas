@@ -21,7 +21,13 @@ export async function agendarEnMake(cita: Cita): Promise<RespuestaMake> {
       cache: "no-store",
     });
     if (res.status !== 200) throw new MakeError(`Make respondió ${res.status}`);
-    cuerpo = JSON.parse(await res.text());
+    const texto = await res.text();
+    try {
+      cuerpo = JSON.parse(texto);
+    } catch {
+      // Solo va al log del servidor, nunca al cliente.
+      throw new MakeError(`Make respondió 200 pero el cuerpo no es JSON: "${texto.slice(0, 200)}"`);
+    }
   } catch (e) {
     if (e instanceof MakeError) throw e;
     throw new MakeError(e instanceof Error ? e.name : "Error desconocido");
@@ -30,6 +36,8 @@ export async function agendarEnMake(cita: Cita): Promise<RespuestaMake> {
   }
 
   const parsed = respuestaMakeSchema.safeParse(cuerpo);
-  if (!parsed.success) throw new MakeError("Respuesta de Make inválida");
+  if (!parsed.success) {
+    throw new MakeError(`Respuesta de Make fuera del contrato: ${JSON.stringify(cuerpo).slice(0, 200)}`);
+  }
   return parsed.data;
 }
