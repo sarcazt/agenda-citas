@@ -41,6 +41,8 @@ Aplicación web (Next.js, App Router, TypeScript, Tailwind) para agendar citas. 
 }
 ```
 
+`cupos_libres` es opcional: si Make no lo envía, la app simplemente no muestra los cupos.
+
 Cualquier otra cosa (código distinto de 200, JSON inválido, `estado` desconocido o más de 20 s de espera) se trata como error y el cliente ve un mensaje genérico.
 
 **Hoja de Google Sheets** (fila 1 = encabezados): `id | fecha | franja | nombre | correo | estado | creado_en`.

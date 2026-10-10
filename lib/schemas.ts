@@ -21,6 +21,6 @@ export type Cita = z.infer<typeof citaSchema>;
 export const respuestaMakeSchema = z.object({
   estado: z.enum(ESTADOS),
   mensaje: z.string(),
-  cupos_libres: z.coerce.number().int().min(0),
+  cupos_libres: z.coerce.number().int().min(0).optional(),
 });
 export type RespuestaMake = z.infer<typeof respuestaMakeSchema>;

@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 export type Estado = "confirmada" | "con_alerta" | "rechazada";
 
 export type Resultado =
-  | { tipo: "exito"; estado: Estado; mensaje: string; cuposLibres: number; fecha: string; hora: string }
+  | { tipo: "exito"; estado: Estado; mensaje: string; cuposLibres?: number; fecha: string; hora: string }
   | { tipo: "error"; mensaje: string };
 
 const MENSAJE_RECHAZADA = "Para esa franja no se puede agendar una cita, elige otra franja.";
@@ -85,8 +85,12 @@ export function ModalResultado({
             <dd>{resultado.fecha}</dd>
             <dt className="font-medium">Franja</dt>
             <dd>{resultado.hora}</dd>
-            <dt className="font-medium">Cupos libres</dt>
-            <dd>{resultado.cuposLibres}</dd>
+            {resultado.cuposLibres !== undefined && (
+              <>
+                <dt className="font-medium">Cupos libres</dt>
+                <dd>{resultado.cuposLibres}</dd>
+              </>
+            )}
           </dl>
         )}
 
