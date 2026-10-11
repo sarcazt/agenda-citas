@@ -49,17 +49,22 @@ Cualquier otra cosa (código distinto de 200, JSON inválido, `estado` desconoci
 **Hoja de Google Sheets** (fila 1 = encabezados): `id_cita | fecha_solicitud | propietario | correo | mascota | especie | servicio | fecha | hora`.
 Make escribe las filas; la app solo las lee y filtra por `fecha`. Las columnas se ubican por el nombre del encabezado. `fecha` se acepta como `AAAA-MM-DD` o `D/M/AAAA`, y `hora` como `HH:MM` o `HH:MM:SS`. La columna `estado` decide qué se muestra: el calendario y los cupos cuentan solo las citas **Aprobada** (también `confirmada` y `con_alerta`); las `Rechazada` y las filas sin estado se ignoran.
 
-## Asistencia (webhook de Make)
+## Asistencia (mismo webhook)
 
-La recepcionista marca desde `/agenda` si cada cita **Asistió** o **No asistió**. La app solo lee la hoja, así que la escritura la hace un escenario de Make.
+La recepcionista marca desde `/agenda` si cada cita **Asistió** o **No asistió**. La app solo lee la hoja, así que la escritura la hace Make, **por el mismo webhook** (`MAKE_WEBHOOK_URL`). La clave `accion` distingue el tipo de envío:
 
-**La app envía** (POST JSON a `MAKE_ASISTENCIA_WEBHOOK_URL`):
+| `accion` | Cuándo | Qué debe hacer Make |
+| --- | --- | --- |
+| `agendar` | Al enviar el formulario de cita | El flujo de siempre (cupos, fila, Webhook response con `estado`) |
+| `asistencia` | Al pulsar Asistió / No asistió | Actualizar la columna `asistencia` y responder **200** |
+
+Envío de asistencia:
 
 ```json
-{ "id_cita": "02c2ab25-dd26-49f5-b049-0b864c67bd82", "asistencia": "Sí" }
+{ "accion": "asistencia", "id_cita": "02c2ab25-dd26-49f5-b049-0b864c67bd82", "asistencia": "Sí" }
 ```
 
-`asistencia` es `"Sí"` o `"No"`. **Make debe**: buscar la fila donde `id_cita` coincide, actualizar la columna `asistencia` y responder con código **200** (Webhook response). Cualquier otro código se trata como error y la interfaz revierte el cambio.
+`asistencia` es `"Sí"` o `"No"`. Cada ruta del escenario debe terminar en su propio Webhook response; un código distinto de 200, o un JSON con `"ok": false`, se trata como error y la interfaz revierte el cambio. En el envío de `agendar` la clave `accion` viaja junto a los demás campos.
 
 ## Variables de entorno
 
@@ -68,7 +73,6 @@ Copia `.env.example` a `.env.local` para desarrollo.
 | Variable | Descripción |
 | --- | --- |
 | `MAKE_WEBHOOK_URL` | URL del webhook del Escenario 1. Solo se usa en el servidor. |
-| `MAKE_ASISTENCIA_WEBHOOK_URL` | URL del webhook del escenario que marca la asistencia. Solo se usa en el servidor. |
 | `GOOGLE_SHEET_ID` | ID de la hoja (la parte entre `/d/` y `/edit` en su URL). |
 | `GOOGLE_SHEET_TAB` | Nombre de la pestaña. Por defecto `citas`. |
 | `GOOGLE_SHEET_CUPOS_GID` | `gid` de la pestaña de cupos (columnas `franja, fecha, hora, cupo, ocupados`). Por defecto `0`, la primera pestaña. |
