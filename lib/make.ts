@@ -43,3 +43,30 @@ export async function agendarEnMake(cita: Cita): Promise<RespuestaMake> {
   }
   return parsed.data;
 }
+
+/**
+ * Actualiza la columna "asistencia" de una cita llamando al webhook de Make
+ * del escenario de asistencia. Cualquier respuesta distinta de 200 es error.
+ */
+export async function registrarAsistenciaEnMake(idCita: string, asistio: boolean): Promise<void> {
+  const url = process.env.MAKE_ASISTENCIA_WEBHOOK_URL;
+  if (!url) throw new MakeError("MAKE_ASISTENCIA_WEBHOOK_URL no está configurada");
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id_cita: idCita, asistencia: asistio ? "Sí" : "No" }),
+      signal: controller.signal,
+      cache: "no-store",
+    });
+    if (res.status !== 200) throw new MakeError(`Make respondió ${res.status} al registrar la asistencia`);
+  } catch (e) {
+    if (e instanceof MakeError) throw e;
+    throw new MakeError(e instanceof Error ? e.name : "Error desconocido");
+  } finally {
+    clearTimeout(timer);
+  }
+}

@@ -9,7 +9,19 @@ export type CitaAgenda = {
   servicio: string;
   /** Estado tal como está en la hoja (p. ej. "Aprobada" o "Rechazada"). */
   estado: string;
+  /** Columna "asistencia" de la hoja: true si la recepcionista la marcó como asistió. */
+  asistio: boolean;
 };
+
+/** "Sí", "si", "asistió", "true", "x"... -> true. Vacío o "No" -> false. */
+function leerAsistencia(valor: string): boolean {
+  const v = valor
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+  return ["si", "s", "x", "1", "true", "yes", "asistio"].includes(v);
+}
 
 /** Una cita cuenta (calendario y cupos) solo si está aprobada. */
 export function esAprobada(cita: Pick<CitaAgenda, "estado">): boolean {
@@ -168,6 +180,7 @@ export async function todasLasCitas(): Promise<CitaAgenda[]> {
       especie: celda(fila, "especie"),
       servicio: celda(fila, "servicio"),
       estado: celda(fila, "estado"),
+      asistio: leerAsistencia(celda(fila, "asistencia")),
     });
   }
 
