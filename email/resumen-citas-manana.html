@@ -68,20 +68,7 @@
                   <th align="left" style="padding:10px 12px;font-size:12px;line-height:16px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #e2e8f0;">Servicio</th>
                 </tr>
 
-                <!--
-                  Las filas se generan en Make con un módulo "Text aggregator"
-                  (origen: las citas aprobadas de mañana). En el campo "Row type"
-                  del agregador pega SOLO el bloque <tr> de abajo, mapeando cada
-                  marcador con la columna correspondiente de la pestaña citas:
-
-                  <tr>
-                    <td style="padding:12px;font-size:14px;line-height:20px;color:#0f172a;font-weight:700;border-bottom:1px solid #f1f5f9;">{{hora}}</td>
-                    <td style="padding:12px;font-size:14px;line-height:20px;color:#0f172a;border-bottom:1px solid #f1f5f9;">{{propietario}}</td>
-                    <td style="padding:12px;font-size:14px;line-height:20px;color:#475569;border-bottom:1px solid #f1f5f9;">{{mascota}} ({{especie}})</td>
-                    <td style="padding:12px;font-size:14px;line-height:20px;color:#475569;border-bottom:1px solid #f1f5f9;">{{servicio}}</td>
-                  </tr>
-                -->
-
+                <!-- Aquí va el Text del agregador (una fila <tr> por cita) -->
                 {{filas}}
 
               </table>
