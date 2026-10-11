@@ -25,7 +25,8 @@ Aplicación web (Next.js, App Router, TypeScript, Tailwind) para agendar citas. 
   "especie": "Gato",
   "servicio": "Consulta general",
   "fecha": "2026-10-14",
-  "hora": "10:00"
+  "hora": "10:00",
+  "fecha_solicitud": "2026-10-10 17:16:20"
 }
 ```
 
@@ -47,6 +48,23 @@ Cualquier otra cosa (código distinto de 200, JSON inválido, `estado` desconoci
 
 **Hoja de Google Sheets** (fila 1 = encabezados): `id_cita | fecha_solicitud | propietario | correo | mascota | especie | servicio | fecha | hora`.
 Make escribe las filas; la app solo las lee y filtra por `fecha`. Las columnas se ubican por el nombre del encabezado. `fecha` se acepta como `AAAA-MM-DD` o `D/M/AAAA`, y `hora` como `HH:MM` o `HH:MM:SS`. La columna `estado` decide qué se muestra: el calendario y los cupos cuentan solo las citas **Aprobada** (también `confirmada` y `con_alerta`); las `Rechazada` y las filas sin estado se ignoran.
+
+## Asistencia (mismo webhook)
+
+La recepcionista marca desde `/agenda` si cada cita **Asistió** o **No asistió**. La app solo lee la hoja, así que la escritura la hace Make, **por el mismo webhook** (`MAKE_WEBHOOK_URL`). La clave `accion` distingue el tipo de envío:
+
+| `accion` | Cuándo | Qué debe hacer Make |
+| --- | --- | --- |
+| `agendar` | Al enviar el formulario de cita | El flujo de siempre (cupos, fila, Webhook response con `estado`) |
+| `asistencia` | Al pulsar Asistió / No asistió | Actualizar la columna `asistencia` y responder **200** |
+
+Envío de asistencia:
+
+```json
+{ "accion": "asistencia", "id_cita": "02c2ab25-dd26-49f5-b049-0b864c67bd82", "asistencia": "Sí" }
+```
+
+`asistencia` es `"Sí"` o `"No"`. Cada ruta del escenario debe terminar en su propio Webhook response; un código distinto de 200, o un JSON con `"ok": false`, se trata como error y la interfaz revierte el cambio. En el envío de `agendar` la clave `accion` viaja junto a los demás campos.
 
 ## Variables de entorno
 

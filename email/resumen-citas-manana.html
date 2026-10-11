@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>Resumen de citas de mañana</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:Arial,Helvetica,sans-serif;">
+
+  <!-- Texto de vista previa (se ve en la bandeja de entrada) -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#f1f5f9;">
+    Resumen de las citas aprobadas para mañana.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f1f5f9" style="background-color:#f1f5f9;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+
+        <table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:640px;background-color:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;">
+
+          <!-- Cabecera -->
+          <tr>
+            <td align="center" bgcolor="#0f172a" style="background-color:#0f172a;padding:32px 24px;">
+              <div style="font-size:40px;line-height:48px;">&#128197;</div>
+              <h1 style="margin:12px 0 0 0;font-size:24px;line-height:30px;color:#ffffff;font-weight:700;">
+                Resumen de citas de mañana
+              </h1>
+              <p style="margin:8px 0 0 0;font-size:15px;line-height:22px;color:#cbd5e1;">
+                Citas programadas para el día de mañana
+              </p>
+            </td>
+          </tr>
+
+          <!-- Introducción -->
+          <tr>
+            <td style="padding:28px 32px 8px 32px;">
+              <p style="margin:0;font-size:15px;line-height:24px;color:#475569;">
+                Hola, este es el resumen de las citas aprobadas para mañana.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Total de citas -->
+          <tr>
+            <td style="padding:16px 32px 8px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f1f5f9;border:1px solid #e2e8f0;border-radius:12px;">
+                <tr>
+                  <td align="center" style="padding:20px 24px;">
+                    <div style="font-size:40px;line-height:44px;color:#0f172a;font-weight:700;">{{total}}</div>
+                    <div style="margin-top:4px;font-size:13px;line-height:18px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">
+                      citas programadas
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Listado de citas -->
+          <tr>
+            <td style="padding:16px 32px 8px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e2e8f0;border-radius:12px;border-collapse:separate;overflow:hidden;">
+                <tr bgcolor="#f8fafc" style="background-color:#f8fafc;">
+                  <th align="left" style="padding:10px 12px;font-size:12px;line-height:16px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #e2e8f0;">Hora</th>
+                  <th align="left" style="padding:10px 12px;font-size:12px;line-height:16px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #e2e8f0;">Propietario</th>
+                  <th align="left" style="padding:10px 12px;font-size:12px;line-height:16px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #e2e8f0;">Mascota</th>
+                  <th align="left" style="padding:10px 12px;font-size:12px;line-height:16px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #e2e8f0;">Servicio</th>
+                </tr>
+
+                <!-- Aquí va el Text del agregador (una fila <tr> por cita) -->
+                {{filas}}
+
+              </table>
+            </td>
+          </tr>
+
+          <!-- Nota -->
+          <tr>
+            <td style="padding:16px 32px 32px 32px;">
+              <p style="margin:0;font-size:14px;line-height:22px;color:#475569;">
+                Solo se incluyen las citas con estado <strong>Aprobada</strong>.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Pie -->
+          <tr>
+            <td align="center" bgcolor="#f8fafc" style="background-color:#f8fafc;padding:20px 32px;border-top:1px solid #e2e8f0;">
+              <p style="margin:0;font-size:12px;line-height:18px;color:#94a3b8;">
+                Resumen automático de Agenda de citas, para uso interno de la administración.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

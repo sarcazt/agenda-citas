@@ -10,6 +10,20 @@ export function hoyBogota(): string {
   }).format(new Date());
 }
 
+/** Fecha y hora actuales en Bogotá con segundos: "AAAA-MM-DD HH:mm:ss". */
+export function ahoraBogota(): string {
+  return new Intl.DateTimeFormat("sv-SE", {
+    timeZone: ZONA,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).format(new Date());
+}
+
 /** Verifica que el texto sea una fecha real con formato YYYY-MM-DD. */
 export function esFechaValida(valor: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(valor)) return false;
