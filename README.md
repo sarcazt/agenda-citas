@@ -25,7 +25,8 @@ Aplicación web (Next.js, App Router, TypeScript, Tailwind) para agendar citas. 
   "especie": "Gato",
   "servicio": "Consulta general",
   "fecha": "2026-10-14",
-  "hora": "10:00"
+  "hora": "10:00",
+  "fecha_solicitud": "2026-10-10 17:16:20"
 }
 ```
 

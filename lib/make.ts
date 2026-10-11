@@ -1,3 +1,4 @@
+import { ahoraBogota } from "./fechas";
 import { respuestaMakeSchema, type Cita, type RespuestaMake } from "./schemas";
 
 const TIMEOUT_MS = 20_000;
@@ -16,7 +17,8 @@ export async function agendarEnMake(cita: Cita): Promise<RespuestaMake> {
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(cita),
+      // La fecha_solicitud la genera el servidor, no el navegador.
+      body: JSON.stringify({ ...cita, fecha_solicitud: ahoraBogota() }),
       signal: controller.signal,
       cache: "no-store",
     });
